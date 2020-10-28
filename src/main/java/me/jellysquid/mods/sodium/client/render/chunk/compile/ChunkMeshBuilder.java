@@ -6,7 +6,6 @@ import me.jellysquid.mods.sodium.client.model.quad.ModelQuadEncoder;
 import me.jellysquid.mods.sodium.client.model.quad.ModelQuadViewMutable;
 import me.jellysquid.mods.sodium.client.model.quad.sink.ModelQuadSink;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
-import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockLayer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.GlAllocationUtils;
 
@@ -57,16 +56,13 @@ public class ChunkMeshBuilder implements ModelQuadSink {
      */
     private final float scale;
 
-    private final BlockLayer layer;
-
-    public ChunkMeshBuilder(GlVertexFormat<?> format, BlockLayer layer, int initialSize) {
+    public ChunkMeshBuilder(GlVertexFormat<?> format, int initialSize) {
         this.scale = 1.0f / 32.0f;
         this.stride = format.getStride() * 4;
         this.encoder = SodiumVertexFormats.getEncoder(format);
 
         this.buffer = GlAllocationUtils.allocateByteBuffer(initialSize);
         this.capacity = initialSize;
-        this.layer = layer;
     }
 
     public void begin(ChunkRenderData.Builder renderData) {
@@ -105,7 +101,7 @@ public class ChunkMeshBuilder implements ModelQuadSink {
         }
 
         // Write the quad to the backing buffer using the marked position from earlier
-        this.encoder.write(quad, this.buffer, position, this.layer.isMipped());
+        this.encoder.write(quad, this.buffer, position);
 
         Sprite sprite = quad.getSprite();
 

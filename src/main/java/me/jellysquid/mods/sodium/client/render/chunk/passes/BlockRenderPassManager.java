@@ -1,41 +1,54 @@
 package me.jellysquid.mods.sodium.client.render.chunk.passes;
 
-import net.minecraft.util.Identifier;
+import it.unimi.dsi.fastutil.objects.Reference2IntArrayMap;
+import net.minecraft.client.render.RenderLayer;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-
+/**
+ * Maps vanilla render layers to render passes used by Sodium. This provides compatibility with the render layers already
+ * used by the base game.
+ */
 public class BlockRenderPassManager {
-    private final EnumMap<WorldRenderPhase, List<BlockRenderPass>> byPhase = new EnumMap<>(WorldRenderPhase.class);
-    private final List<BlockRenderPass> all = new ArrayList<>();
+    private final Reference2IntArrayMap<RenderLayer> mappingsId = new Reference2IntArrayMap<>();
 
     public BlockRenderPassManager() {
-        for (WorldRenderPhase pass : WorldRenderPhase.values()) {
-            this.byPhase.put(pass, new ArrayList<>());
+        this.mappingsId.defaultReturnValue(-1);
+    }
+
+    public int getRenderPassId(RenderLayer layer) {
+        int pass = this.mappingsId.getInt(layer);
+
+        if (pass < 0) {
+            throw new NullPointerException("No render pass exists for layer: " + layer);
+        }
+
+        return pass;
+    }
+
+    private void addMapping(RenderLayer layer, BlockRenderPass type) {
+        if (this.mappingsId.put(layer, type.ordinal()) >= 0) {
+            throw new IllegalArgumentException("Layer target already defined for " + layer);
         }
     }
 
-    public <R extends BlockRenderPass> void add(WorldRenderPhase phase, Identifier id, Factory<R> factory, BlockLayer... layers) {
-        R pass = factory.create(this.all.size(), id, layers);
+    /**
+     * Creates a set of render pass mappings to vanilla render layers which closely mirrors the rendering
+     * behavior of vanilla.
+     */
+    public static BlockRenderPassManager createDefaultMappings() {
+        BlockRenderPassManager mapper = new BlockRenderPassManager();
+        mapper.addMapping(RenderLayer.getSolid(), BlockRenderPass.SOLID);
+        mapper.addMapping(RenderLayer.getCutoutMipped(), BlockRenderPass.CUTOUT_MIPPED);
+        mapper.addMapping(RenderLayer.getCutout(), BlockRenderPass.CUTOUT);
+        mapper.addMapping(RenderLayer.getTranslucent(), BlockRenderPass.TRANSLUCENT);
+        mapper.addMapping(RenderLayer.getTripwire(), BlockRenderPass.TRIPWIRE);
 
-        this.byPhase.get(phase).add(pass);
-        this.all.add(pass);
+        return mapper;
+    }
+    public BlockRenderPass getRenderPassForLayer(RenderLayer layer) {
+        return this.getRenderPass(this.getRenderPassId(layer));
     }
 
-    public Iterable<BlockRenderPass> getSortedPasses() {
-        return this.all;
-    }
-
-    public Iterable<BlockRenderPass> getPassesForPhase(WorldRenderPhase phase) {
-        return this.byPhase.get(phase);
-    }
-
-    public int getPassCount() {
-        return this.all.size();
-    }
-
-    public interface Factory<R> {
-        R create(int ordinal, Identifier id, BlockLayer[] layers);
+    public BlockRenderPass getRenderPass(int i) {
+        return BlockRenderPass.VALUES[i];
     }
 }
