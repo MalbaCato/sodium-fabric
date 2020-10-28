@@ -17,9 +17,10 @@ import net.minecraft.client.gui.screen.VideoOptionsScreen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.StringRenderable;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Language;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -201,10 +202,16 @@ public class SodiumOptionsGUI extends Screen {
 
         Option<?> option = element.getOption();
 
+        List<OrderedText> tooltip = new ArrayList<>(this.textRenderer.wrapLines(option.getTooltip(), boxWidth - (textPadding * 2)));
+
+
         StringRenderable title = new LiteralText(option.getName()).formatted(Formatting.GRAY);
 
         List<StringRenderable> text = this.textRenderer.wrapLines(title, textWidth);
         text.addAll(this.textRenderer.wrapLines(option.getTooltip(), textWidth));
+        if (impact != null) {
+            tooltip.add(Language.getInstance().reorder(new LiteralText(Formatting.GRAY + "Performance Impact: " + impact.toDisplayString())));
+        }
 
         int boxHeight = (text.size() * 12) + boxPadding;
         int boxYLimit = boxY + boxHeight;
@@ -217,14 +224,10 @@ public class SodiumOptionsGUI extends Screen {
 
         this.fillGradient(matrixStack, boxX, boxY, boxX + boxWidth, boxY + boxHeight, 0xE0000000, 0xE0000000);
 
-        for (int i = 0; i < text.size(); i++) {
-            StringRenderable str = text.get(i);
 
-            if (str.getString().isEmpty()) {
-                continue;
-            }
+        for (int i = 0; i < tooltip.size(); i++) {
+            this.textRenderer.draw(matrixStack, tooltip.get(i), boxX + textPadding, boxY + textPadding + (i * 12), 0xFFFFFFFF);
 
-            this.textRenderer.draw(matrixStack, str, boxX + textPadding, boxY + textPadding + (i * 12), 0xFFFFFFFF);
         }
     }
 

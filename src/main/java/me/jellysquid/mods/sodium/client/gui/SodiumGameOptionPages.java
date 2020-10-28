@@ -19,8 +19,8 @@ import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.options.AttackIndicator;
 import net.minecraft.client.options.GraphicsMode;
 import net.minecraft.client.options.Option;
-import net.minecraft.client.options.ParticlesOption;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.options.ParticlesMode;
 import net.minecraft.client.util.Window;
 
 import java.util.ArrayList;
