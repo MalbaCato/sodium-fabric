@@ -1,5 +1,5 @@
 ![Project icon](https://git-assets.jellysquid.me/hotlink-ok/sodium/icon-rounded-128px.png)
-
+dummy commit to initiate the build
 # Sodium (for Fabric)
 ![GitHub license](https://img.shields.io/github/license/jellysquid3/sodium-fabric.svg)
 ![GitHub issues](https://img.shields.io/github/issues/jellysquid3/sodium-fabric.svg)
