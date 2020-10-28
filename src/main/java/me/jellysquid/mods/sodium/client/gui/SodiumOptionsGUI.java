@@ -205,13 +205,11 @@ public class SodiumOptionsGUI extends Screen {
         List<OrderedText> tooltip = new ArrayList<>(this.textRenderer.wrapLines(option.getTooltip(), boxWidth - (textPadding * 2)));
 
 
-        StringRenderable title = new LiteralText(option.getName()).formatted(Formatting.GRAY);
+        OrderedText title = Language.getInstance().reorder(new LiteralText(option.getName()).formatted(Formatting.GRAY));
 
-        List<StringRenderable> text = this.textRenderer.wrapLines(title, textWidth);
+        List<OrderedText> text = new ArrayList<>(this.textRenderer.wrapLines(title, textWidth));
         text.addAll(this.textRenderer.wrapLines(option.getTooltip(), textWidth));
-        if (impact != null) {
-            tooltip.add(Language.getInstance().reorder(new LiteralText(Formatting.GRAY + "Performance Impact: " + impact.toDisplayString())));
-        }
+
 
         int boxHeight = (text.size() * 12) + boxPadding;
         int boxYLimit = boxY + boxHeight;
