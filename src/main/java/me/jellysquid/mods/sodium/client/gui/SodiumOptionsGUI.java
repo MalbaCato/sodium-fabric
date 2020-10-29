@@ -208,7 +208,7 @@ public class SodiumOptionsGUI extends Screen {
         OrderedText title = Language.getInstance().reorder(new LiteralText(option.getName()).formatted(Formatting.GRAY));
 
         List<OrderedText> text = new ArrayList<>();
-        text.add(title)
+        text.add(title);
         text.addAll(this.textRenderer.wrapLines(option.getTooltip(), textWidth));
 
 
